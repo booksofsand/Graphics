@@ -1,6 +1,6 @@
-graphics: graphics.o
-	g++ -o graphics graphics.o
-graphics.o: graphics.cc
-	g++ -c graphics.cc
+Graphics: Graphics.o
+	g++ -o Graphics Graphics.o
+Graphics.o: Graphics.cc
+	g++ -c Graphics.cc
 clean:
-	rm -f *~ *.o tester
+	rm -f *~ *.o
