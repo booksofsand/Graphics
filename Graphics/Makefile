@@ -48,9 +48,12 @@ OBJECTS_DIR   = ./
 
 ####### Files
 
-SOURCES       = main.cpp 
-OBJECTS       = main.o
-DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
+SOURCES       = main.cpp \
+		sandboxwindow.cpp 
+OBJECTS       = main.o \
+		sandboxwindow.o
+DIST          = scratch \
+		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/linux.conf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/sanitize.conf \
@@ -114,7 +117,8 @@ DIST          = /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exceptions.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/yacc.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf \
-		Graphics.pro  main.cpp
+		Graphics.pro sandboxwindow.h main.cpp \
+		sandboxwindow.cpp
 QMAKE_TARGET  = Graphics
 DESTDIR       = 
 TARGET        = Graphics
@@ -277,7 +281,8 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents sandboxwindow.h $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp sandboxwindow.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -319,8 +324,11 @@ compiler_clean:
 
 ####### Compile
 
-main.o: main.cpp 
+main.o: main.cpp sandboxwindow.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
+
+sandboxwindow.o: sandboxwindow.cpp sandboxwindow.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o sandboxwindow.o sandboxwindow.cpp
 
 ####### Install
 

@@ -1,0 +1,12 @@
+// make labels
+QLabel* label1 = new QLabel();
+label1->setText("books");
+QLabel* label2 = new QLabel();
+label2->setText("of");
+QLabel* label3 = new QLabel();
+label3->setText("sand");
+
+// add labels to layout
+grid->addWidget(label1, 0, 0, 1, 1);  // object, row, col, rowspan, colspan
+grid->addWidget(label2, 1, 1, 1, 1);
+grid->addWidget(label3, 2, 2, 1, 1);

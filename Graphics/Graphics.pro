@@ -12,8 +12,13 @@ TARGET = Graphics
 TEMPLATE = app
 
 
-SOURCES += main.cpp
+SOURCES += main.cpp \
+    sandboxwindow.cpp
 
-HEADERS  +=
+HEADERS  += \
+    sandboxwindow.h
 
 FORMS    +=
+
+DISTFILES += \
+    scratch
