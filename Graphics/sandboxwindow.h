@@ -4,17 +4,21 @@
 #include <string>
 #include <QGridLayout>
 
+#define MAXDEPTH 10
+#define MAXROWS 28
+
 class SandboxWindow
 {
 public:
-    SandboxWindow();
+    SandboxWindow(std::string filename);
     void addWord(QString word, int row, int col, int depth);
     void removeWord(int row, int col, int depth);
+    void switchToDepth(int depth);
 
 private:
-    QGridLayout* grid;  // grid that actually displays
-    //QString words[];    // array of words at different rows, cols, depths
-    // MM: ^ not sure what format we want
+    QGridLayout* grid;                    // grid that actually displays
+    QString lines[MAXDEPTH][MAXROWS];     // array of lines at different depths
+    void readLines(std::string filename);
 };
 
 #endif // SANDBOXWINDOW_H
