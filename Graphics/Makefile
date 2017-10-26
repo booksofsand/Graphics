@@ -49,9 +49,12 @@ OBJECTS_DIR   = ./
 ####### Files
 
 SOURCES       = main.cpp \
-		sandboxwindow.cpp 
+		sandboxwindow.cpp \
+		kinecthandler.cpp moc_kinecthandler.cpp
 OBJECTS       = main.o \
-		sandboxwindow.o
+		sandboxwindow.o \
+		kinecthandler.o \
+		moc_kinecthandler.o
 DIST          = scratch \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/common/unix.conf \
@@ -117,8 +120,11 @@ DIST          = scratch \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/exceptions.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/yacc.prf \
 		/usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/lex.prf \
-		Graphics.pro sandboxwindow.h main.cpp \
-		sandboxwindow.cpp
+		Graphics.pro sandboxwindow.h \
+		helpers.h \
+		kinecthandler.h main.cpp \
+		sandboxwindow.cpp \
+		kinecthandler.cpp
 QMAKE_TARGET  = Graphics
 DESTDIR       = 
 TARGET        = Graphics
@@ -281,8 +287,8 @@ dist: distdir FORCE
 distdir: FORCE
 	@test -d $(DISTDIR) || mkdir -p $(DISTDIR)
 	$(COPY_FILE) --parents $(DIST) $(DISTDIR)/
-	$(COPY_FILE) --parents sandboxwindow.h $(DISTDIR)/
-	$(COPY_FILE) --parents main.cpp sandboxwindow.cpp $(DISTDIR)/
+	$(COPY_FILE) --parents sandboxwindow.h helpers.h kinecthandler.h $(DISTDIR)/
+	$(COPY_FILE) --parents main.cpp sandboxwindow.cpp kinecthandler.cpp $(DISTDIR)/
 
 
 clean: compiler_clean 
@@ -308,8 +314,13 @@ benchmark: first
 
 compiler_rcc_make_all:
 compiler_rcc_clean:
-compiler_moc_header_make_all:
+compiler_moc_header_make_all: moc_kinecthandler.cpp
 compiler_moc_header_clean:
+	-$(DEL_FILE) moc_kinecthandler.cpp
+moc_kinecthandler.cpp: kinecthandler.h \
+		/usr/lib/x86_64-linux-gnu/qt5/bin/moc
+	/usr/lib/x86_64-linux-gnu/qt5/bin/moc $(DEFINES) -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I/home/maya/coding/thesis/Graphics/Graphics -I/usr/include/x86_64-linux-gnu/qt5 -I/usr/include/x86_64-linux-gnu/qt5/QtWidgets -I/usr/include/x86_64-linux-gnu/qt5/QtGui -I/usr/include/x86_64-linux-gnu/qt5/QtCore -I/usr/include/c++/6 -I/usr/include/x86_64-linux-gnu/c++/6 -I/usr/include/c++/6/backward -I/usr/lib/gcc/x86_64-linux-gnu/6/include -I/usr/local/include -I/usr/lib/gcc/x86_64-linux-gnu/6/include-fixed -I/usr/include/x86_64-linux-gnu -I/usr/include kinecthandler.h -o moc_kinecthandler.cpp
+
 compiler_moc_source_make_all:
 compiler_moc_source_clean:
 compiler_uic_make_all:
@@ -320,15 +331,24 @@ compiler_yacc_impl_make_all:
 compiler_yacc_impl_clean:
 compiler_lex_make_all:
 compiler_lex_clean:
-compiler_clean: 
+compiler_clean: compiler_moc_header_clean 
 
 ####### Compile
 
-main.o: main.cpp sandboxwindow.h
+main.o: main.cpp sandboxwindow.h \
+		kinecthandler.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o main.o main.cpp
 
-sandboxwindow.o: sandboxwindow.cpp sandboxwindow.h
+sandboxwindow.o: sandboxwindow.cpp sandboxwindow.h \
+		kinecthandler.h \
+		helpers.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o sandboxwindow.o sandboxwindow.cpp
+
+kinecthandler.o: kinecthandler.cpp kinecthandler.h
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o kinecthandler.o kinecthandler.cpp
+
+moc_kinecthandler.o: moc_kinecthandler.cpp 
+	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o moc_kinecthandler.o moc_kinecthandler.cpp
 
 ####### Install
 

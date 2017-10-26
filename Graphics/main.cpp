@@ -1,24 +1,36 @@
+#include "sandboxwindow.h"
 #include <QApplication>
 #include <iostream>
-#include "sandboxwindow.h"
+#include <vector>
 
 int main(int argc, char *argv[])
 {
     // make an application
     QApplication a(argc, argv);
 
-    std::cout << "Making a SandboxWindow." << std::endl;
-    //SandboxWindow* box = new SandboxWindow();
-    SandboxWindow* box = new SandboxWindow(argv[1]);
+    // initialize window with optional filename
+    std::vector<std::string> filenames;
+    for (int i = 1; i < argc; i++) {
+        char* arg = argv[i];
+        //std::cout << "arg: " << arg << std::endl; // MM: testing
 
+        // if arg isn't in dict of flag options, assume it's a filename
+        filenames.push_back(arg);
+    }
+
+
+    SandboxWindow* box = new SandboxWindow(filenames);
+
+    /*
     // test switchToDepth
-    if (argc > 2) {
-        std::string op = argv[2];
+    if (argc > 3) {
+        std::string op = argv[3];
         if (op == "switchDepth")
             box->switchToDepth(1);
         else
-            std::cout << "argv[2]: " << argv[2] << std::endl;
+            std::cout << "argv[3]: " << argv[3] << std::endl;
     }
+    */
 
     // MM: main() should probably do the interacting with Kinect
     //     but how to call these updates? Is there some sort of

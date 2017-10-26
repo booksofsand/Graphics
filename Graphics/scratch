@@ -10,3 +10,19 @@ label3->setText("sand");
 grid->addWidget(label1, 0, 0, 1, 1);  // object, row, col, rowspan, colspan
 grid->addWidget(label2, 1, 1, 1, 1);
 grid->addWidget(label3, 2, 2, 1, 1);
+
+
+/* QPROCESS
+QObject *parent;
+...
+QString program = "./path/to/Qt/examples/widgets/analogclock";
+QStringList arguments;
+arguments << "-style" << "fusion";
+QProcess *myProcess = new QProcess(parent);
+myProcess->start(program, arguments);
+
+QString program = "";
+QStringList args;
+QProcess* kinectBuffer = new QProcess();
+kinectBuffer->start(program, args);
+*/
