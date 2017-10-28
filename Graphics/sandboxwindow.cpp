@@ -44,25 +44,26 @@ SandboxWindow::SandboxWindow(std::vector<std::string> filenames) {
     }
 
     // build labels from depth 0 source grid
-    /*
-    for (int row = 0; row < MAXROWS; row++) {
-        for (int col = 0; col < MAXCOLS; col++) {
+    for (size_t row = 0; row < MAXROWS; row++) {
+        for (size_t col = 0; col < MAXCOLS; col++) {
             QLabel* label = new QLabel();
             //label->setMargin(0);                // MM: doesn't seem to do anything
             //label->setContentsMargins(0,0,0,0); // MM: doesn't seem to do anything
             //label->setStyleSheet("border: 1px solid red"); // MM: for test viewing
             label->setText(lines[0][row][col]);
             grid->addWidget(label, row, col, 1, 1);
+	    depthsDisplayed[row][col] = 0;        // save depth number displayed
         }
     }
-    */
 
+    /*
     // build labels from depth 0 source grid
-    for (int row = 0; row < MAXROWS; row++) {
+    for (size_t row = 0; row < MAXROWS; row++) {
         QLabel* label = new QLabel();
         label->setText(lines[0][row]);
         grid->addWidget(label, row, 0, 1, 1);
     }
+    */
 
     // make & config a window
     QWidget* win = new QWidget();
@@ -72,17 +73,15 @@ SandboxWindow::SandboxWindow(std::vector<std::string> filenames) {
     win->setWindowTitle("Books of Sand"); // set title
     win->show();                          // display window
 
-    //addWord("NEW", 15, 5, 0);             // set a word (test)
-    //removeWord(5,5,0);                    // remove a word (test)
-
     // start an event handler object for Kinect
-    kinectHandler = new KinectHandler();
+    //kinectHandler = new KinectHandler();
+    kinectHandler = new KinectHandler(this);
     kinectHandler->exec();
 }
 
 
 // READLINES
-// Read input text file into grid at given depth;
+// Read input text file into grid at given depth (default 0);
 // Wrap text around to next depth if needed
 void SandboxWindow::readLines(std::string filename, size_t depth) {
     std::cout << "In SandboxWindow::readLines!" << std::endl;   // MM: testing
@@ -91,9 +90,9 @@ void SandboxWindow::readLines(std::string filename, size_t depth) {
     if (filename == "") {
         notify("No input filename detected; initializing empty window.");
         for (size_t row = 0; row < MAXROWS; row++) {
-            //for (size_t col = 0; col < MAXCOLS; col++)
-                //lines[depth][row][col] = QChar();     // fill single depth
-            lines[depth][row] = QChar();     // fill single depth
+            for (size_t col = 0; col < MAXCOLS; col++)
+                lines[depth][row][col] = QChar();     // fill single depth
+	      //lines[depth][row] = QChar();     // fill single depth
         }
         return;
     }
@@ -105,24 +104,24 @@ void SandboxWindow::readLines(std::string filename, size_t depth) {
 
     // build source text grid line by line
     size_t row = 0;
-    int MAXLENGTH = 64; // figure out how to calc; no hardcoding
+    size_t MAXLENGTH = 64; // figure out how to calc; no hardcoding?
     while(infile.good()) {
 
         // build one line of text
-        //size_t col = 0;
-        QString line = "";
-        while(line.size() < MAXLENGTH && infile.good()) {
-        ///while(col < MAXLENGTH && infile.good()) {
+        //QString line = "";
+        //while(line.size() < MAXLENGTH && infile.good()) {
+        size_t col = 0;
+	while(col < MAXLENGTH && infile.good()) {
             char c = infile.get();
             if(c == '\n' || c == EOF)   // move to next row for new lines
                 break;
-            line.append(QChar(c));
-            //lines[depth][row][col] = QChar(c);
-            //col++;
+            //line.append(QChar(c));
+            lines[depth][row][col] = QChar(c);
+            col++;
             //std::cout << c;                                // MM: testing
             //std::cout << line.toStdString() << std::endl;  // MM: testing
         }
-        lines[depth][row] = line;
+        //lines[depth][row] = line;
         //std::cout << std::endl;    // MM: testing
 
         // update row, depth
@@ -138,29 +137,42 @@ void SandboxWindow::readLines(std::string filename, size_t depth) {
     //    std::cout << lines[0][row].toStdString() << std::endl;  // MM: can't cout a QString
 }
 
-void SandboxWindow::switchToDepth(int depth) { // MM: good for testing, at least
+
+// SETTEXT
+// Set text of label at given row and col
+void SandboxWindow::setText(QString text, size_t row, size_t col) {
+  //  std::cout << "In SandboxWindow::setText!" << std::endl;  // MM: testing
+
+  QLabel* label = dynamic_cast<QLabel*>(grid->itemAtPosition(row, col)->widget());
+  label->setText(text);
+}
+
+
+// UPDATEDEPTHDISPLAY
+// Given updated depth map, update displayed text
+void SandboxWindow::updateDepthDisplay(size_t** depthsToDisplay) {
+  std::cout << "In SandboxWindow::updateDepthDisplay!" << std::endl;  // MM: testing
+
+  for (size_t row = 0; row < MAXROWS; row++) {
+    for (size_t col = 0; col < MAXCOLS; col++) {
+      if (depthsDisplayed[row][col] != depthsToDisplay[row][col]) {
+	size_t newDepth = depthsToDisplay[row][col];
+	setText(lines[newDepth][row][col], row, col);
+	depthsDisplayed[row][col] = newDepth;
+      }
+    }
+  }
+}
+
+
+void SandboxWindow::switchToDepth(size_t depth) { // MM: good for testing, at least
     std::cout << "In SandboxWindow::switchToDepth!" << std::endl;  // MM: testing
 
-    size_t col = 0;
     for (size_t row = 0; row < MAXROWS; row++) {
-        //for (size_t col = 0; col < MAXCOLS; col++) {
+        for (size_t col = 0; col < MAXCOLS; col++) {
             QLabel* label = dynamic_cast<QLabel*>(grid->itemAtPosition(row, col)->widget());
-            label->setText(lines[depth][row]);
-            //label->setText(lines[depth][row][col]);
-        //}
+            //label->setText(lines[depth][row]);
+            label->setText(lines[depth][row][col]);
+        }
     }
-}
-
-void SandboxWindow::addWord(QString word, int row, int col, int depth) {
-    depth++; // stop giving me an unused parameter warning; implement later
-
-    QLabel* label = dynamic_cast<QLabel*>(grid->itemAtPosition(row, col)->widget());
-    label->setText(word);
-}
-
-void SandboxWindow::removeWord(int row, int col, int depth) {
-    depth++; // stop giving me an unused parameter warning; implement later
-
-    QLabel* label = dynamic_cast<QLabel*>(grid->itemAtPosition(row, col)->widget());
-    label->setText("");
 }
