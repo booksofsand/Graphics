@@ -32,7 +32,7 @@ SandboxWindow::SandboxWindow(std::vector<std::string> filenames) {
 
     // make a layout with blank labels
     grid = new QGridLayout;
-    grid->setSpacing(0);
+    grid->setSpacing(0); //LJ sets spacing on all sides
 
     // read in source text
     if (filenames.size() == 0)  // no source text
