@@ -50,10 +50,10 @@ SandboxWindow::SandboxWindow(std::vector<std::string> filenames) {
 	    //LJ edited the "preferences" to make it a little more legible
 		// also removed some redundant options for QGridLayout
              //label->setStyleSheet("QLabel { background-color : red; }");
-	    label->setMargin(0);
-	    label->setIndent(0);
+	    //label->setMargin(0); //LJ appear to do nothing
+	    //label->setIndent(0); //LJ still appears to do nothing
             label->setText(lines[0][row][col]);
-	    label->setAlignment(Qt::AlignCenter);
+	    label->setAlignment(Qt::AlignCenter); //this makes the space between letters nicer
 
             depthsDisplayed[row][col] = 0;        // save depth number displayed
             grid->addWidget(label, row, col, 1, 1);
