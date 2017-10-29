@@ -14,13 +14,11 @@ TEMPLATE = app
 
 SOURCES += main.cpp \
     sandboxwindow.cpp \
-    kinectbuffer.cpp \
     kinecthandler.cpp
 
 HEADERS  += \
     sandboxwindow.h \
     helpers.h \
-    kinectbuffer.h \
     kinecthandler.h
 
 FORMS    +=

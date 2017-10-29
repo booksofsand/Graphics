@@ -3,6 +3,7 @@
 #include "kinecthandler.h"
 #include <QGridLayout>
 #include <QLabel>
+#include <QtCore>
 //#include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -46,13 +47,20 @@ SandboxWindow::SandboxWindow(std::vector<std::string> filenames) {
     // build labels from depth 0 source grid
     for (size_t row = 0; row < MAXROWS; row++) {
         for (size_t col = 0; col < MAXCOLS; col++) {
+
             QLabel* label = new QLabel();
-            //label->setMargin(0);                // MM: doesn't seem to do anything
-            //label->setContentsMargins(0,0,0,0); // MM: doesn't seem to do anything
-            //label->setStyleSheet("border: 1px solid red"); // MM: for test viewing
             label->setText(lines[0][row][col]);
+
+            label->setMargin(0);                // MM: doesn't seem to do anything
+            label->setContentsMargins(0,0,0,0); // MM: doesn't seem to do anything
+            label->adjustSize();                // MM: doesn't seem to do anything
+            label->setIndent(0);                // MM: doesn't seem to do anything
+            label->setLineWidth(0);             // MM: doesn't seem to do anything
+            label->setAlignment(Qt::AlignCenter);
+            //label->setStyleSheet("border: 0.5px solid red"); // MM: for test viewing
+
+            depthsDisplayed[row][col] = 0;        // save depth number displayed
             grid->addWidget(label, row, col, 1, 1);
-	    depthsDisplayed[row][col] = 0;        // save depth number displayed
         }
     }
 

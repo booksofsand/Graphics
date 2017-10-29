@@ -5,7 +5,7 @@
 
 KinectHandler::KinectHandler(SandboxWindow* theBox) : QEventLoop(0) { // MM: 0 = parent
   box = theBox;
-  startTimer(3000);   // 3-second timer
+  //startTimer(3000);   // 3-second timer
 
   currDepth = 0; // MM: testing only
 
