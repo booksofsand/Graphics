@@ -24,7 +24,7 @@
        though, the cells don't fit exactly to their characters, so
        the text spacing looks pretty wide. But this would also allow
        us to color parts of the display based on depth (like Andrew
-       requested on 10/23). */
+       requested on 10/23). *///LJ  I think this will serve us better in the long run
 
 
 SandboxWindow::SandboxWindow(std::vector<std::string> filenames) {
@@ -33,8 +33,6 @@ SandboxWindow::SandboxWindow(std::vector<std::string> filenames) {
     // make a layout with blank labels
     grid = new QGridLayout;
     grid->setSpacing(0);
-    grid->setMargin(0);
-    grid->setContentsMargins(0,0,0,0);
 
     // read in source text
     if (filenames.size() == 0)  // no source text
@@ -49,15 +47,13 @@ SandboxWindow::SandboxWindow(std::vector<std::string> filenames) {
         for (size_t col = 0; col < MAXCOLS; col++) {
 
             QLabel* label = new QLabel();
+	    //LJ edited the "preferences" to make it a little more legible
+		// also removed some redundant options for QGridLayout
+             //label->setStyleSheet("QLabel { background-color : red; }");
+	    label->setMargin(0);
+	    label->setIndent(0);
             label->setText(lines[0][row][col]);
-
-            label->setMargin(0);                // MM: doesn't seem to do anything
-            label->setContentsMargins(0,0,0,0); // MM: doesn't seem to do anything
-            label->adjustSize();                // MM: doesn't seem to do anything
-            label->setIndent(0);                // MM: doesn't seem to do anything
-            label->setLineWidth(0);             // MM: doesn't seem to do anything
-            label->setAlignment(Qt::AlignCenter);
-            //label->setStyleSheet("border: 0.5px solid red"); // MM: for test viewing
+	    label->setAlignment(Qt::AlignCenter);
 
             depthsDisplayed[row][col] = 0;        // save depth number displayed
             grid->addWidget(label, row, col, 1, 1);
