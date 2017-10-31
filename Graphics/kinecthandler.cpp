@@ -5,7 +5,7 @@
 
 KinectHandler::KinectHandler(SandboxWindow* theBox) : QEventLoop(0) { // MM: 0 = parent
   box = theBox;
-  //startTimer(3000);   // 3-second timer
+  startTimer(3000);   // 3-second timer
 
   currDepth = 0; // MM: testing only
 
@@ -67,29 +67,24 @@ void KinectHandler::timerEvent(QTimerEvent *event) {
   std::cout << "In KinectHandler::timerEvent." << std::endl; // MM: testing
   //  std::cout << "Timer ID:" << event->timerId() << std::endl; // MM: testing
 
-  size_t** depthsToDisplay = calcDepthsToDisplay(); // MM: calcDepthsToDisplay will later use Kinect depth map
-  box->updateDepthDisplay(depthsToDisplay);
+  size_t depthsToDisplay[MAXROWS][MAXCOLS]; // initialize new array
+  calcDepthsToDisplay(depthsToDisplay);     // calculate depth levels to display
+  box->updateTextDisplay(depthsToDisplay);  // send Sandbox Window depth levels
     
   // TODO: pass frame through filtering
   // TODO: pass frame to SandboxWindow to find new depths & update window
 }
 
 
-// CALCDEPTHSTODISPLAY
-// Calculates which depth levels to display at each row,col;
-// Returns pointer to 2D array of depth level numbers
-size_t** KinectHandler::calcDepthsToDisplay() {
-
-  currDepth++; // MM: testing only
-  size_t** depthsToDisplay;
-  depthsToDisplay = new size_t*[30];
-  for (size_t row = 0; row < 30; row++) {
-    depthsToDisplay[row] = new size_t[60];
-    for (size_t col = 0; col < 60; col++) {
-      depthsToDisplay[row][col] = currDepth;
+// CALC DEPTHS TO DISPLAY
+// Calculates which depth levels to display at each row,col
+void KinectHandler::calcDepthsToDisplay(size_t depthsToDisplay[MAXROWS][MAXCOLS]) {
+  for (size_t row = 0; row < MAXROWS; row++) {
+    for (size_t col = 0; col < MAXCOLS; col++) {
+      depthsToDisplay[row][col] = col < MAXCOLS / 3 ? 0 : 1;  // MM: testing
     }
   }
-  return depthsToDisplay;
+
 }
 
 //void KinectHandler::rawDepthFrameDispatcher(const Kinect::FrameBuffer& frameBuffer) {

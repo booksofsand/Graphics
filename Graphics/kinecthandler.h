@@ -1,7 +1,8 @@
 #ifndef KINECTHANDLER_H
 #define KINECTHANDLER_H
-
-//#include "sandboxwindow.h"
+#define MAXROWS 30
+#define MAXCOLS 60
+#include "sandboxwindow.h"
 #include <QEventLoop>
 
 class SandboxWindow;
@@ -17,7 +18,8 @@ private:
     size_t currDepth; // MM: testing only
     
     void timerEvent(QTimerEvent* event);
-    size_t** calcDepthsToDisplay();
+    void calcDepthsToDisplay(size_t depthsToDisplay[MAXROWS][MAXCOLS]);
+    //    size_t** calcDepthsToDisplay();
     //void KinectHandler::rawDepthFrameDispatcher(const Kinect::FrameBuffer& frameBuffer);
     //void KinectHandler::receiveFilteredFrame(const Kinect::FrameBuffer& frameBuffer);
 
