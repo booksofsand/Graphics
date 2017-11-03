@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
     }
 
 
-    SandboxWindow* box = new SandboxWindow(filenames);
+    //SandboxWindow* box = new SandboxWindow(filenames);
 
     /*
     // test switchToDepth

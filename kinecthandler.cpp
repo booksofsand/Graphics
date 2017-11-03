@@ -7,7 +7,7 @@ KinectHandler::KinectHandler(SandboxWindow* theBox) : QEventLoop(0) { // MM: 0 =
   box = theBox;
   startTimer(3000);   // 3-second timer
 
-  currDepth = 0; // MM: testing only
+  currDepth = 0; // MM: testing only  
 
   /* MM: following from Sandbox.cpp. requires Vrui and Kinect
 
@@ -46,6 +46,8 @@ KinectHandler::KinectHandler(SandboxWindow* theBox) : QEventLoop(0) { // MM: 0 =
   float demDistScale=cfg.retrieveValue<float>("./demDistScale",1.0f);
   std::string controlPipeName=cfg.retrieveString("./controlPipeName","");
 
+// Start reading in input
+
   // Start streaming depth frames
   camera->startStreaming(0, Misc::createFunctionCall(this, &KinectHandler::rawDepthFrameDispatcher));
 
@@ -67,6 +69,7 @@ void KinectHandler::timerEvent(QTimerEvent *event) {
   std::cout << "In KinectHandler::timerEvent." << std::endl; // MM: testing
   //  std::cout << "Timer ID:" << event->timerId() << std::endl; // MM: testing
 
+  std::cout << event << std::endl;
   size_t depthsToDisplay[MAXROWS][MAXCOLS]; // initialize new array
   calcDepthsToDisplay(depthsToDisplay);     // calculate depth levels to display
   box->updateTextDisplay(depthsToDisplay);  // send Sandbox Window depth levels
