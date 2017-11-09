@@ -15,25 +15,36 @@
 #include <Misc/ConfigurationFile.h>
 
 // Kinect include files from Sandbox.cpp
+/*
 #include <Kinect/FileFrameSource.h>
 #include <Kinect/DirectFrameSource.h>
-#include <Kinect/OpenDirectFrameSource.h>
+#include <Kinect/OpenDirectFrameSource.h> */ // MM: commenting out to compile
 
+<<<<<<< HEAD
+=======
+KinectHandler::KinectHandler(SandboxWindow* theBox) : QEventLoop(0) { // MM: 0 = parent
+  box = theBox;
+  startTimer(5000);   // 3-second timer
+
+  currDepth = 1; // MM: testing only
+
+/*
+>>>>>>> e6b8dabf28267582f3ecb31c6b126a76f98a72ff
 // Sandbox default configuration parameters
 Misc::ConfigurationFileSection cfg=sandboxConfigFile.getSection("/SARndbox");
 unsigned int cameraIndex=cfg.retrieveValue<int>("./cameraIndex",0);
 std::string cameraConfiguration=cfg.retrieveString("./cameraConfiguration","Camera");
 
-/* Open the 3D camera device of the selected index: */
+// Open the 3D camera device of the selected index
 Kinect::DirectFrameSource*realCamera=Kinect::openDirectFrameSource(cameraIndex);
 Misc::ConfigurationFileSection cameraConfigurationSection=cfg.getSection(cameraConfiguration.c_str());
 realCamera->configure(cameraConfigurationSection);
 camera=realCamera;
 
-/* Get the camera's intrinsic parameters: */
+// Get the camera's intrinsic parameters
 cameraIps=camera->getIntrinsicParameters();
 
-
+ */ // MM: commenting out to compile
 
 
 
@@ -127,10 +138,11 @@ void KinectHandler::timerEvent(QTimerEvent *event) {
 void KinectHandler::calcDepthsToDisplay(size_t depthsToDisplay[MAXROWS][MAXCOLS]) {
   for (size_t row = 0; row < MAXROWS; row++) {
     for (size_t col = 0; col < MAXCOLS; col++) {
-      depthsToDisplay[row][col] = col < MAXCOLS / 3 ? 0 : 1;  // MM: testing
+      //depthsToDisplay[row][col] = col < MAXCOLS / 3 ? 0 : 1;  // MM: testing
+      depthsToDisplay[row][col] = currDepth;  // MM: testing
     }
   }
-
+  currDepth++;
 }
 
 //void KinectHandler::rawDepthFrameDispatcher(const Kinect::FrameBuffer& frameBuffer) {
