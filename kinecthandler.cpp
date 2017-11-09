@@ -3,18 +3,24 @@
 #include <iostream>
 #include <QTimerEvent>
 
+
+// Misc include files from Sandbox.cpp
+#include <Misc/SizedTypes.h>
+#include <Misc/SelfDestructPointer.h>
+#include <Misc/FixedArray.h>
+#include <Misc/FunctionCalls.h>
+#include <Misc/FileNameExtensions.h>
+#include <Misc/StandardValueCoders.h>
+#include <Misc/ArrayValueCoders.h>
+#include <Misc/ConfigurationFile.h>
+
 // Kinect include files from Sandbox.cpp
 #include <Kinect/FileFrameSource.h>
 #include <Kinect/DirectFrameSource.h>
 #include <Kinect/OpenDirectFrameSource.h>
 
-KinectHandler::KinectHandler(SandboxWindow* theBox) : QEventLoop(0) { // MM: 0 = parent
-  box = theBox;
-  startTimer(3000);   // 3-second timer
-
-  currDepth = 0; // MM: testing only
-
 // Sandbox default configuration parameters
+Misc::ConfigurationFileSection cfg=sandboxConfigFile.getSection("/SARndbox");
 unsigned int cameraIndex=cfg.retrieveValue<int>("./cameraIndex",0);
 std::string cameraConfiguration=cfg.retrieveString("./cameraConfiguration","Camera");
 
@@ -29,7 +35,22 @@ cameraIps=camera->getIntrinsicParameters();
 
 
 
+
+
+
+
+
+
+
+
+
 //////////////////////////////////////////////////////////////////////
+
+/*KinectHandler::KinectHandler(SandboxWindow* theBox) : QEventLoop(0) { // MM: 0 = parent
+  box = theBox;
+  startTimer(3000);   // 3-second timer
+
+  currDepth = 0; // MM: testing only */
 
   /* MM: following from Sandbox.cpp. requires Vrui and Kinect
 

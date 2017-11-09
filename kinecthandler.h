@@ -5,6 +5,17 @@
 #include "sandboxwindow.h"
 #include <QEventLoop>
 
+// Forward declarations from Sandbox.cpp: //
+namespace Misc {
+template <class ParameterParam>
+class FunctionCall;
+}
+
+namespace Kinect {
+class Camera;
+}
+
+// Declarations for QT //
 class SandboxWindow;
 
 class KinectHandler : public QEventLoop
