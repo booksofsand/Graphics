@@ -1,3 +1,3 @@
-#define MAXDEPTH 10
-#define MAXROWS 30
-#define MAXCOLS 60
+#define MAXDEPTH 6
+#define MAXROWS 64
+#define MAXCOLS 48
