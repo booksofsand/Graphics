@@ -5,10 +5,7 @@
 #include <string>
 #include <vector>
 #include <QGridLayout>
-
-#define MAXDEPTH 10
-#define MAXROWS 30
-#define MAXCOLS 60
+#include "config.h"
 
 class KinectHandler; // forward declaration
 class SandboxWindow
