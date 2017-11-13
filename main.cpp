@@ -3,7 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <QtWidgets>
-#include <iostream>
+
 using namespace std;
 
 int main(int argc, char *argv[])
@@ -21,33 +21,17 @@ int main(int argc, char *argv[])
         filenames.push_back(arg);
     }
 
-
+    /*
     QWidget window;
     window.resize(320, 240);
     window.setWindowTitle
           (QApplication::translate("childwidget", "Child widget"));
     window.show();
-
-    SandboxWindow* box = new SandboxWindow(filenames);
-
-   
-
+    */
     
-    // test switchToDepth
-    if (argc > 3) {
-        std::string op = argv[3];
-        if (op == "switchDepth")
-            box->switchToDepth(1);
-        else
-            std::cout << "argv[3]: " << argv[3] << std::endl;
-    }
+    SandboxWindow* box = new SandboxWindow(filenames);
  
     cout << "hello" << endl;  
-
-    // MM: main() should probably do the interacting with Kinect
-    //     but how to call these updates? Is there some sort of
-    //     mainloop we can define for this QApplication?
-    //     Is _main()_ the mainloop?
 
     // return the executable
     return a.exec();

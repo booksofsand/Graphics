@@ -35,7 +35,7 @@
 // SANDBOX WINDOW
 // Initialize a SandboxWindow with text
 SandboxWindow::SandboxWindow(std::vector<std::string> filenames) {
-  //std::cout << "In SandboxWindow::SandboxWindow!" << std::endl;  // MM: testing
+  std::cout << "In SandboxWindow::SandboxWindow!" << std::endl;  // MM: testing
   
   // MAKE A LAYOUT
   grid = new QGridLayout;

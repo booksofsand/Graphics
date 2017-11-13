@@ -19,8 +19,7 @@
 KinectHandler::KinectHandler(SandboxWindow* theBox) : QEventLoop(0) { // MM: 0 = parent
   box = theBox;
   //startTimer(5000);   // 5-second timer
-  //currDepth = 1; // MM: testing only
-
+  currDepth = 1; // MM: testing only
 
   // Read the sandbox's default configuration parameters
   std::string sandboxConfigFileName = CONFIG_CONFIGDIR;
@@ -32,10 +31,14 @@ KinectHandler::KinectHandler(SandboxWindow* theBox) : QEventLoop(0) { // MM: 0 =
   std::string cameraConfiguration = cfg.retrieveString("./cameraConfiguration", "Camera");
   double scale = cfg.retrieveValue<double>("./scaleFactor", 100.0);
   
+  std::cout << "Done reading in config file." << std::endl; // MM: testing
+  
   std::string sandboxLayoutFileName = CONFIG_CONFIGDIR;
   sandboxLayoutFileName.push_back('/');
   sandboxLayoutFileName.append(CONFIG_DEFAULTBOXLAYOUTFILENAME);
   sandboxLayoutFileName = cfg.retrieveString("./sandboxLayoutFileName", sandboxLayoutFileName);
+  
+  std::cout << "Done reading in layout file." << std::endl; // MM: testing
 
   /* MM: think we can delete this whole section; will keep for now
   Math::Interval<double> elevationRange = cfg.retrieveValue<Math::Interval<double> >("./elevationRange",Math::Interval<double>(-1000.0,1000.0));
@@ -61,17 +64,24 @@ KinectHandler::KinectHandler(SandboxWindow* theBox) : QEventLoop(0) { // MM: 0 =
   */
 
   // Open the 3D camera device of the selected index
-  Kinect::DirectFrameSource*realCamera = Kinect::openDirectFrameSource(cameraIndex);
+  Kinect::DirectFrameSource* realCamera = Kinect::openDirectFrameSource(cameraIndex);
   Misc::ConfigurationFileSection cameraConfigurationSection = cfg.getSection(cameraConfiguration.c_str());
   realCamera->configure(cameraConfigurationSection);
   camera = realCamera;
+  
+  std::cout << "Done opening camera." << std::endl; // MM: testing
 
-  // MM: don't know if we need all this:
-  for(int i=0;i<2;++i)
-    frameSize[i]=camera->getActualFrameSize(Kinect::FrameSource::DEPTH)[i]; // 640 by 480
-  /* Get the camera's per-pixel depth correction parameters and evaluate it on the depth frame's pixel grid: */
-  Kinect::FrameSource::DepthCorrection* depthCorrection=camera->getDepthCorrectionParameters();
-  if(depthCorrection!=0) {
+  for(int i = 0 ; i < 2; ++i)
+    frameSize[i] = camera->getActualFrameSize(Kinect::FrameSource::DEPTH)[i]; // 640 by 480
+    
+  /*
+  // MM: the below line causes a seg fault. camera isn't NULL
+  // Get the camera's per-pixel depth correction parameters and evaluate it on the depth frame's pixel grid
+  Kinect::FrameSource::DepthCorrection* depthCorrection = camera->getDepthCorrectionParameters();
+  
+  std::cout << "Done getting depth correction parameters." << std::endl; // MM: testing
+  
+  if(depthCorrection != 0) {
 	pixelDepthCorrection = depthCorrection->getPixelCorrection(frameSize);
 	delete depthCorrection;
   }
@@ -85,10 +95,15 @@ KinectHandler::KinectHandler(SandboxWindow* theBox) : QEventLoop(0) { // MM: 0 =
 	pdcPtr->offset = 0.0f; 
       }
   }
+  std::cout << "Done fixing depth correction." << std::endl; // MM: testing
+  */
   
+  // MM: the below line causes a seg fault. camera isn't NULL. 
+  //     look in Kinect/Kinect/Camera.cpp for my comment
   // Get the camera's intrinsic parameters
   cameraIps = camera->getIntrinsicParameters();
 
+  std::cout << "Done getting camera's intrinsic parameters." << std::endl; // MM: testing
   
   // Start streaming depth frames
   camera->startStreaming(0, Misc::createFunctionCall(this, &KinectHandler::rawDepthFrameDispatcher));
