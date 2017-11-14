@@ -73,9 +73,9 @@ KinectHandler::KinectHandler(SandboxWindow* theBox) : QEventLoop(0) { // MM: 0 =
 
   for(int i = 0 ; i < 2; ++i)
     frameSize[i] = camera->getActualFrameSize(Kinect::FrameSource::DEPTH)[i]; // 640 by 480
-    
-  /*
-  // MM: the below line causes a seg fault. camera isn't NULL
+  std::cout << "Done updating frame size." << std::endl; // MM: testing
+  
+  // MM: the below line causes a seg fault. camera isn't NULL. modified Camera.cpp's method for quick fix
   // Get the camera's per-pixel depth correction parameters and evaluate it on the depth frame's pixel grid
   Kinect::FrameSource::DepthCorrection* depthCorrection = camera->getDepthCorrectionParameters();
   
@@ -96,10 +96,9 @@ KinectHandler::KinectHandler(SandboxWindow* theBox) : QEventLoop(0) { // MM: 0 =
       }
   }
   std::cout << "Done fixing depth correction." << std::endl; // MM: testing
-  */
+  
   
   // MM: the below line causes a seg fault. camera isn't NULL. 
-  //     look in Kinect/Kinect/Camera.cpp for my comment
   // Get the camera's intrinsic parameters
   cameraIps = camera->getIntrinsicParameters();
 
