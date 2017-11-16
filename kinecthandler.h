@@ -55,6 +55,8 @@ private:
 	
     SandboxWindow* box;
     size_t currDepth; // MM: testing only
+    //const Kinect::FrameBuffer frameBuffer;
+    Kinect::FrameBuffer frameBuffer;
     
     void timerEvent(QTimerEvent* event);
     void calcDepthsToDisplay(size_t depthsToDisplay[MAXROWS][MAXCOLS]);

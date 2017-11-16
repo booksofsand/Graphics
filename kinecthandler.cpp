@@ -11,6 +11,11 @@
 #include <Misc/ArrayValueCoders.h>
 #include <Misc/ConfigurationFile.h>
 
+// MM: added in attempt to counter seg fault:
+#include <IO/Directory.h>
+#include <IO/StandardDirectory.h>
+//#include <Cluster/OpenFile.h>
+
 // Kinect include files from Sandbox.cpp
 #include <Kinect/FileFrameSource.h>
 #include <Kinect/DirectFrameSource.h>
@@ -18,9 +23,15 @@
 
 KinectHandler::KinectHandler(SandboxWindow* theBox) : QEventLoop(0) { // MM: 0 = parent
   box = theBox;
-  //startTimer(5000);   // 5-second timer
+  startTimer(3000);
   currDepth = 1; // MM: testing only
-
+  
+  std::cout << "In KinectHandler::KinectHandler." << std::endl; // MM: testing
+  
+  // Set the current directory of the IO sub-library
+  //IO::Directory::setCurrent(Cluster::openDirectory(0, "."));  // MM: added in attempt to counter seg fault
+  IO::Directory::setCurrent(new IO::StandardDirectory("."));  // MM: added in attempt to counter seg fault
+  
   // Read the sandbox's default configuration parameters
   std::string sandboxConfigFileName = CONFIG_CONFIGDIR;
   sandboxConfigFileName.push_back('/');
@@ -126,13 +137,28 @@ void KinectHandler::timerEvent(QTimerEvent *event) {
   std::cout << "In KinectHandler::timerEvent." << std::endl; // MM: testing
   //  std::cout << "Timer ID:" << event->timerId() << std::endl; // MM: testing
 
+  float* f = frameBuffer.getData<GLfloat>();
+  if (!frameBuffer.isValid())
+    std::cout << "NOT VALID" << std::endl;
+  for (int row = 0; row < 480; row = row+50) {    
+    for (int col = 0; col < 640; col+=50) {
+
+      //if ((row*640)+col < frameBuffer.getData<GLfloat>().size())
+	std::cout << f[(row*640)+col] << "\t";
+    }
+    std::cout << std::endl;
+  }
+  //exit(0);
+  
+  
+  //std::cout << std::endl << "DEPTH IMAGE" << std::endl << frameBuffer.getData<GLfloat>()[2] << std::endl << std::endl;
+  // MM: frameBuffer.getData<GLfloat>() is a pointer to a list of 307200 floats (the frame is 480 by 640 in dimension)
+/*  
   std::cout << event << std::endl;
   size_t depthsToDisplay[MAXROWS][MAXCOLS]; // initialize new array
   calcDepthsToDisplay(depthsToDisplay);     // calculate depth levels to display
   box->updateTextDisplay(depthsToDisplay);  // send Sandbox Window depth levels
-    
-  // TODO: pass frame through filtering
-  // TODO: pass frame to SandboxWindow to find new depths & update window
+  */
 }
 
 
@@ -148,12 +174,16 @@ void KinectHandler::calcDepthsToDisplay(size_t depthsToDisplay[MAXROWS][MAXCOLS]
   currDepth++;
 }
 
-void KinectHandler::rawDepthFrameDispatcher(const Kinect::FrameBuffer& frameBuffer) {
+void KinectHandler::rawDepthFrameDispatcher(const Kinect::FrameBuffer& newFrameBuffer) {
 
   // MM: if we don't use frameFilter, here we can just analyze the framebuffer
+  
+  frameBuffer = newFrameBuffer;
 
-  std::cout << "In KinectHandler::rawDepthFrameDispatcher." << std::endl; // MM: testing
-
+  //std::cout << "In KinectHandler::rawDepthFrameDispatcher." << std::endl; // MM: testing
+  //int i = 0;
+  //i++;
+  
   /* MM: following is original Sandbox.cpp code
   // Pass the received frame to the frame filter and the hand extractor
   if(frameFilter != 0 && !pauseUpdates)
