@@ -15,9 +15,9 @@
 #include <QGraphicsScene>
 #include <QGraphicsView>
 
-/* MM: SANDBOX WINDOW OPTIONS:
+/* MM: SANDBOX WINDOW STRATEGIES:
    1) Have one label per row, containing one line of text.
-   This way we could ensure the length of the line of text
+   This way we can ensure the length of the line of text
    doesn't go over some set width. However, this may make it
    more difficult to update the window as different coordinates
    have changing depths, since we'd have the rebuild the lines
@@ -29,7 +29,15 @@
    though, the cells don't fit exactly to their characters, so
    the text spacing looks pretty wide. But this would also allow
    us to color parts of the display based on depth (like Andrew
-   requested on 10/23). *///LJ  I think this will serve us better in the long run
+   requested on 10/23). 
+   //LJ  I think this will serve us better in the long run
+
+   3) COMPROMISE: Store characters in rows and cols but display
+   with one label per row. This makes the text display nicely with
+   no strange spacing (though doesn't allow coloring) but is easy
+   to update per-character changes upon receiving new depth maps. 
+   MM: ^ currently implemented
+*/
 
 
 // SANDBOX WINDOW
@@ -63,7 +71,8 @@ SandboxWindow::SandboxWindow(std::vector<std::string> filenames) {
     //std::cout << "line width: " << fm.width(currLine) << std::endl; // MM: testing
   }
   updateTextDisplay(depthsToDisplay);
-    
+
+  
   /* ROWS AND COLS
   // build labels from depth 0 source grid
   for (size_t row = 0; row < MAXROWS; row++) {
@@ -84,6 +93,7 @@ SandboxWindow::SandboxWindow(std::vector<std::string> filenames) {
   }
   */
 
+  
   /* ROWS ONLY
   // build labels from depth 0 source grid
   for (size_t row = 0; row < MAXROWS; row++) {
@@ -92,6 +102,7 @@ SandboxWindow::SandboxWindow(std::vector<std::string> filenames) {
   grid->addWidget(label, row, 0, 1, 1);
   }
   */
+  
 
   // make & config a window
   QWidget* win = new QWidget();
@@ -103,7 +114,8 @@ SandboxWindow::SandboxWindow(std::vector<std::string> filenames) {
 
 
   // ROTATION
-  // MM: this is just a prelim addition for rotating the window. needs work.
+  // MM: this is just a prelim addition for rotating the window to match
+  //     the sandbox orientation. needs work. better way to flip display?
   //     to stop rotation, comment out this block and uncomment win->show()
   QGraphicsScene* scene = new QGraphicsScene();
   QGraphicsView* view = new QGraphicsView();
@@ -183,16 +195,21 @@ void SandboxWindow::updateTextDisplay(size_t depthsToDisplay[MAXROWS][MAXCOLS]) 
   std::cout << "In SandboxWindow::updateTextDisplay!" << std::endl;  // MM: testing
 
   for (size_t row = 0; row < MAXROWS; row++) {
-    QString currLine = "";
+
     // build line of text
+    QString currLine = "";
     for (size_t col = 0; col < MAXCOLS; col++) {
+
+      // update character to be displayed
       if (depthsDisplayed[row][col] != depthsToDisplay[row][col]) {
 	size_t newDepth = depthsToDisplay[row][col];
 	currLine.append(lines[newDepth][row][col]);  // add char for new depth
 	depthsDisplayed[row][col] = newDepth;        // save depth number displayed
       }
+
+      // add current character
       else
-	currLine.append(lines[depthsDisplayed[row][col]][row][col]); // add current char
+	currLine.append(lines[depthsDisplayed[row][col]][row][col]);
     }
     // set row label text
     QLabel* label = dynamic_cast<QLabel*>(grid->itemAtPosition(row, 0)->widget());
@@ -201,7 +218,7 @@ void SandboxWindow::updateTextDisplay(size_t depthsToDisplay[MAXROWS][MAXCOLS]) 
 }
 
 
-void SandboxWindow::switchToDepth(size_t depth) { // MM: good for testing, at least
+void SandboxWindow::switchToDepth(size_t depth) {     // MM: method for testing
   std::cout << "In SandboxWindow::switchToDepth!" << std::endl;  // MM: testing
 
   for (size_t row = 0; row < MAXROWS; row++) {
