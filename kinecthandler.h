@@ -20,6 +20,7 @@ private:
 	
     SandboxWindow* box;
     size_t boxMaxDepth;
+    size_t startlate;
     
     void timerEvent(QTimerEvent* event);
     void calcDepthsToDisplay(size_t depthsToDisplay[MAXROWS][MAXCOLS]);
