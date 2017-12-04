@@ -1,11 +1,9 @@
 #include "sandboxwindow.h"
-#include "helpers.h"
 #include "kinecthandler.h"
 
 #include <QGridLayout>
 #include <QLabel>
 #include <QtCore>
-//#include <cstdlib>
 #include <iostream>
 #include <fstream>
 #include <string>
@@ -43,7 +41,6 @@
 // SANDBOX WINDOW
 // Initialize a SandboxWindow with text
 SandboxWindow::SandboxWindow(std::vector<std::string> filenames) {
-  std::cout << "In SandboxWindow::SandboxWindow!" << std::endl;  // MM: testing
   
   // MAKE A LAYOUT
   grid = new QGridLayout;
@@ -56,6 +53,7 @@ SandboxWindow::SandboxWindow(std::vector<std::string> filenames) {
     for (size_t depth = 0; depth < filenames.size(); depth++)
       readLines(filenames[depth], depth);
   }
+  maxDepth = filenames.size();
 
   /* ROWS AND COLS STORAGE; ROWS ONLY DISPLAY */
   // build labels from depth 0 source grid
@@ -68,42 +66,10 @@ SandboxWindow::SandboxWindow(std::vector<std::string> filenames) {
     grid->addWidget(label, row, 0, 1, 1);
     for (size_t col = 0; col < MAXCOLS; col++)
       depthsDisplayed[row][col] = -1;         // initialize all depthsDisplayed to -1
-    //std::cout << "line width: " << fm.width(currLine) << std::endl; // MM: testing
   }
   updateTextDisplay(depthsToDisplay);
 
   
-  /* ROWS AND COLS
-  // build labels from depth 0 source grid
-  for (size_t row = 0; row < MAXROWS; row++) {
-  for (size_t col = 0; col < MAXCOLS; col++) {
-
-  QLabel* label = new QLabel();
-  //LJ edited the "preferences" to make it a little more legible
-  // also removed some redundant options for QGridLayout
-  //label->setStyleSheet("QLabel { background-color : red; }");
-  //label->setMargin(0); //LJ appear to do nothing
-  //label->setIndent(0); //LJ still appears to do nothing
-  label->setText(lines[0][row][col]);
-  label->setAlignment(Qt::AlignCenter); //this makes the space between letters nicer
-
-  depthsDisplayed[row][col] = 0;        // save depth number displayed
-  grid->addWidget(label, row, col, 1, 1);
-  }
-  }
-  */
-
-  
-  /* ROWS ONLY
-  // build labels from depth 0 source grid
-  for (size_t row = 0; row < MAXROWS; row++) {
-  QLabel* label = new QLabel();
-  label->setText(lines[0][row]);
-  grid->addWidget(label, row, 0, 1, 1);
-  }
-  */
-  
-
   // make & config a window
   QWidget* win = new QWidget();
   win->resize(480,640);                 // set dimensions
@@ -129,7 +95,6 @@ SandboxWindow::SandboxWindow(std::vector<std::string> filenames) {
   
 
   // start an event handler object for Kinect
-  //kinectHandler = new KinectHandler();
   kinectHandler = new KinectHandler(this);
   kinectHandler->exec();
 }
@@ -139,7 +104,6 @@ SandboxWindow::SandboxWindow(std::vector<std::string> filenames) {
 // Read input text file into grid at given depth (default 0);
 // Wrap text around to next depth if needed
 void SandboxWindow::readLines(std::string filename, size_t depth) {
-  std::cout << "In SandboxWindow::readLines!" << std::endl;   // MM: testing
 
   // INITIALIZE EMPTY SANDBOX WINDOW IF NO FILENAME
   if (filename == "") {
@@ -147,7 +111,6 @@ void SandboxWindow::readLines(std::string filename, size_t depth) {
     for (size_t row = 0; row < MAXROWS; row++) {
       for (size_t col = 0; col < MAXCOLS; col++)
 	lines[depth][row][col] = QChar();     // fill single depth
-      //lines[depth][row] = QChar();     // fill single depth
     }
     return;
   }
@@ -162,28 +125,20 @@ void SandboxWindow::readLines(std::string filename, size_t depth) {
   while(depth < MAXDEPTH && infile.good()) {
 
     // build one line of text
-    //QString line = "";
-    //while(line.size() < MAXLENGTH && infile.good()) {
     size_t col = 0;
     while(col < MAXCOLS && infile.good()) {
       char c = infile.get();
       if(c == '\n' || c == EOF)   // move to next row for new lines
 	break;
-      //line.append(QChar(c));
       lines[depth][row][col] = QChar(c);
       col++;
-      //std::cout << c;                                // MM: testing
-      //std::cout << line.toStdString() << std::endl;  // MM: testing
     }
-    //lines[depth][row] = line;
-    //std::cout << std::endl;    // MM: testing
 
     // update row, depth
     row++;
     if(row == MAXROWS) { // start a new depth
       row = 0;
       depth++;
-      std::cout << "Increasing depth; now " << depth << std::endl; // MM: testing
     }
   }
 }
@@ -192,7 +147,6 @@ void SandboxWindow::readLines(std::string filename, size_t depth) {
 // UPDATE TEXT DISPLAY
 // Given updated depth map, update displayed text
 void SandboxWindow::updateTextDisplay(size_t depthsToDisplay[MAXROWS][MAXCOLS]) {
-  std::cout << "In SandboxWindow::updateTextDisplay!" << std::endl;  // MM: testing
 
   for (size_t row = 0; row < MAXROWS; row++) {
 
@@ -217,15 +171,3 @@ void SandboxWindow::updateTextDisplay(size_t depthsToDisplay[MAXROWS][MAXCOLS]) 
   }
 }
 
-
-void SandboxWindow::switchToDepth(size_t depth) {     // MM: method for testing
-  std::cout << "In SandboxWindow::switchToDepth!" << std::endl;  // MM: testing
-
-  for (size_t row = 0; row < MAXROWS; row++) {
-    for (size_t col = 0; col < MAXCOLS; col++) {
-      QLabel* label = dynamic_cast<QLabel*>(grid->itemAtPosition(row, col)->widget());
-      //label->setText(lines[depth][row]);
-      label->setText(lines[depth][row][col]);
-    }
-  }
-}

@@ -1,11 +1,11 @@
 #ifndef SANDBOXWINDOW_H
 #define SANDBOXWINDOW_H
 
-//#include "kinecthandler.h"
 #include <string>
 #include <vector>
 #include <QGridLayout>
 #include "config.h"
+#include "helpers.h"
 
 class KinectHandler; // forward declaration
 class SandboxWindow
@@ -14,11 +14,11 @@ public:
     SandboxWindow(std::vector<std::string> filenames);
     void switchToDepth(size_t depth);
     void updateTextDisplay(size_t depthsToDisplay[MAXROWS][MAXCOLS]);
-    //    void updateTextDisplay(size_t** depthsToDisplay);
+
+    size_t maxDepth;
     
 private:
     QGridLayout* grid;                    // grid object holding displayed labels
-    //QString lines[MAXDEPTH][MAXROWS];     // array of lines at different depths
     QString lines[MAXDEPTH][MAXROWS][MAXCOLS]; // array of chars at different depths,rows,cols
     size_t depthsDisplayed[MAXROWS][MAXCOLS];  // array of depth numbers for each row,col
     KinectHandler* kinectHandler;              // object that interfaces with the Kinect
