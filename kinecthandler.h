@@ -1,18 +1,18 @@
 #ifndef KINECTHANDLER_H
 #define KINECTHANDLER_H
 
-#include "config.h"
-#include "sandboxwindow.h"
 #include <iostream>
 #include <QEventLoop>
 #include <QTimerEvent>
+#include "config.h"
+#include "sandboxwindow.h"
 
 // Includes from Sandbox.h
-//#include <Threads/TripleBuffer.h>
-//#include <Geometry/Box.h>
-//#include <Geometry/OrthonormalTransformation.h>
-//#include <Geometry/ProjectiveTransformation.h>
 /*
+#include <Threads/TripleBuffer.h>
+#include <Geometry/Box.h>
+#include <Geometry/OrthonormalTransformation.h>
+#include <Geometry/ProjectiveTransformation.h>
 #include <GL/gl.h>
 #include <GL/GLColorMap.h>
 #include <GL/GLMaterial.h>
@@ -63,7 +63,7 @@ private:
     void rawDepthFrameDispatcher(const Kinect::FrameBuffer& frameBuffer);
     //void receiveFilteredFrame(const Kinect::FrameBuffer& frameBuffer);
 
-    // MM: the following copied from Sandbox.h
+    // MM: the following taken from Sandbox.h
     Kinect::FrameSource* camera; // The Kinect camera device
     unsigned int frameSize[2]; // Width and height of the camera's depth frames
     PixelDepthCorrection* pixelDepthCorrection; // Buffer of per-pixel depth correction coefficients // ???

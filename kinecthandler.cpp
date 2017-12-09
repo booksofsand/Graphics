@@ -23,10 +23,8 @@
 
 KinectHandler::KinectHandler(SandboxWindow* theBox) : QEventLoop(0) { // MM: 0 = parent
   box = theBox;
-  startTimer(3000);
-  currDepth = 1; // MM: testing only
-  
-  std::cout << "In KinectHandler::KinectHandler." << std::endl; // MM: testing
+  startTimer(3000);  // 3 seconds
+  currDepth = 1;     // MM: testing only
   
   // Set the current directory of the IO sub-library
   //IO::Directory::setCurrent(Cluster::openDirectory(0, "."));  // MM: added in attempt to counter seg fault
@@ -42,14 +40,14 @@ KinectHandler::KinectHandler(SandboxWindow* theBox) : QEventLoop(0) { // MM: 0 =
   std::string cameraConfiguration = cfg.retrieveString("./cameraConfiguration", "Camera");
   double scale = cfg.retrieveValue<double>("./scaleFactor", 100.0);
   
-  std::cout << "Done reading in config file." << std::endl; // MM: testing
+  //std::cout << "Done reading in config file." << std::endl; // MM: testing
   
   std::string sandboxLayoutFileName = CONFIG_CONFIGDIR;
   sandboxLayoutFileName.push_back('/');
   sandboxLayoutFileName.append(CONFIG_DEFAULTBOXLAYOUTFILENAME);
   sandboxLayoutFileName = cfg.retrieveString("./sandboxLayoutFileName", sandboxLayoutFileName);
   
-  std::cout << "Done reading in layout file." << std::endl; // MM: testing
+  //std::cout << "Done reading in layout file." << std::endl; // MM: testing
 
   /* MM: think we can delete this whole section; will keep for now
   Math::Interval<double> elevationRange = cfg.retrieveValue<Math::Interval<double> >("./elevationRange",Math::Interval<double>(-1000.0,1000.0));
@@ -80,17 +78,16 @@ KinectHandler::KinectHandler(SandboxWindow* theBox) : QEventLoop(0) { // MM: 0 =
   realCamera->configure(cameraConfigurationSection);
   camera = realCamera;
   
-  std::cout << "Done opening camera." << std::endl; // MM: testing
+  //std::cout << "Done opening camera." << std::endl; // MM: testing
 
   for(int i = 0 ; i < 2; ++i)
     frameSize[i] = camera->getActualFrameSize(Kinect::FrameSource::DEPTH)[i]; // 640 by 480
-  std::cout << "Done updating frame size." << std::endl; // MM: testing
+  //std::cout << "Done updating frame size." << std::endl; // MM: testing
   
-  // MM: the below line causes a seg fault. camera isn't NULL. modified Camera.cpp's method for quick fix
   // Get the camera's per-pixel depth correction parameters and evaluate it on the depth frame's pixel grid
   Kinect::FrameSource::DepthCorrection* depthCorrection = camera->getDepthCorrectionParameters();
   
-  std::cout << "Done getting depth correction parameters." << std::endl; // MM: testing
+  //std::cout << "Done getting depth correction parameters." << std::endl; // MM: testing
   
   if(depthCorrection != 0) {
 	pixelDepthCorrection = depthCorrection->getPixelCorrection(frameSize);
@@ -106,14 +103,14 @@ KinectHandler::KinectHandler(SandboxWindow* theBox) : QEventLoop(0) { // MM: 0 =
 	pdcPtr->offset = 0.0f; 
       }
   }
-  std::cout << "Done fixing depth correction." << std::endl; // MM: testing
+  //std::cout << "Done fixing depth correction." << std::endl; // MM: testing
   
   
   // MM: the below line causes a seg fault. camera isn't NULL. 
   // Get the camera's intrinsic parameters
   cameraIps = camera->getIntrinsicParameters();
 
-  std::cout << "Done getting camera's intrinsic parameters." << std::endl; // MM: testing
+  //std::cout << "Done getting camera's intrinsic parameters." << std::endl; // MM: testing
   
   // Start streaming depth frames
   camera->startStreaming(0, Misc::createFunctionCall(this, &KinectHandler::rawDepthFrameDispatcher));
@@ -130,13 +127,12 @@ KinectHandler::KinectHandler(SandboxWindow* theBox) : QEventLoop(0) { // MM: 0 =
 }
 
 
-// MM: we may not actually need a timerEvent. if we have our
-//     Kinect::FrameSource* camera item, it's set up to call
-//     rawDepthFrameDispatcher. frameFilter is set up to call receiveFilteredFrame
+// MM: we won't need a timerEvent if we have our Kinect::FrameSource* camera item
+//     set up to call rawDepthFrameDispatcher
 void KinectHandler::timerEvent(QTimerEvent *event) {
-  std::cout << "In KinectHandler::timerEvent." << std::endl; // MM: testing
   //  std::cout << "Timer ID:" << event->timerId() << std::endl; // MM: testing
 
+  // display depth map
   float* f = frameBuffer.getData<GLfloat>();
   if (!frameBuffer.isValid())
     std::cout << "NOT VALID" << std::endl;
@@ -150,15 +146,8 @@ void KinectHandler::timerEvent(QTimerEvent *event) {
   }
   //exit(0);
   
-  
-  //std::cout << std::endl << "DEPTH IMAGE" << std::endl << frameBuffer.getData<GLfloat>()[2] << std::endl << std::endl;
-  // MM: frameBuffer.getData<GLfloat>() is a pointer to a list of 307200 floats (the frame is 480 by 640 in dimension)
-/*  
-  std::cout << event << std::endl;
-  size_t depthsToDisplay[MAXROWS][MAXCOLS]; // initialize new array
-  calcDepthsToDisplay(depthsToDisplay);     // calculate depth levels to display
-  box->updateTextDisplay(depthsToDisplay);  // send Sandbox Window depth levels
-  */
+  // MM: frameBuffer.getData<GLfloat>() is a pointer to a list of 307200 floats 
+  // (the frame is 480 by 640 in dimension)
 }
 
 
@@ -180,10 +169,6 @@ void KinectHandler::rawDepthFrameDispatcher(const Kinect::FrameBuffer& newFrameB
   
   frameBuffer = newFrameBuffer;
 
-  //std::cout << "In KinectHandler::rawDepthFrameDispatcher." << std::endl; // MM: testing
-  //int i = 0;
-  //i++;
-  
   /* MM: following is original Sandbox.cpp code
   // Pass the received frame to the frame filter and the hand extractor
   if(frameFilter != 0 && !pauseUpdates)
